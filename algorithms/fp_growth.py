@@ -45,7 +45,8 @@ def fp_growth_algorithm(dataset):
         dataset (list): Data set with items.
     
     Returns:
-        freq_itemsets (Node class): List containing the frequen itemsets.
+        freq_itemsets (Node class): Object that contains the itemsets
+            in a tree-structure.
     """
     # Check if the data set is in transaction or binary format and applies a transformaction in the first case
     target_list = ["1", "0", 1, 0, True, False]
