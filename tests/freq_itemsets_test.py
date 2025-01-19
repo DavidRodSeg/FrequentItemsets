@@ -30,4 +30,15 @@ dataset = [["apple", "banana", "orange", "tomato"],
            [0, 1, 0, 1]]
 
 freq_itemsets = fp_growth_algorithm(dataset)
-print(f"- FREQUENT ITEMSETS: {freq_itemsets.to_dict()}")
+print(f"- FREQUENT ITEMSETS: {freq_itemsets.to_dict()} \n\n")
+
+
+#################### WITH CONVERSIONS CASE ####################
+print("WITH CONVERSIONS CASE \n")
+dataset = [["apple", "tomato"],
+           ["banana", "orange", "tomato"],
+           ["apple", "banana", "tomato"],
+           ["tomato"]]
+
+freq_itemsets = fp_growth_algorithm(dataset)
+print(f"- FREQUENT ITEMSETS: {freq_itemsets.to_dict()} \n\n")

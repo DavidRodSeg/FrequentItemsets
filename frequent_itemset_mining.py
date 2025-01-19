@@ -1,6 +1,5 @@
 import csv
-from algorithms.fp_growth import fp_growth_algorithm
-from algorithms.maximal_closed_itemsets import find_closed_maximal, find_frequent
+from algorithms import fp_growth_algorithm, find_closed_maximal, find_frequent
 
 
 #################### LOADING THE DATA SET ####################
