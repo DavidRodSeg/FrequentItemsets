@@ -10,7 +10,7 @@ def find_closed(tree, minimum_support = 1, closed=None):
     """
     Finds the closed frequent itemsets in the specified tree.
 
-    Args:
+    Arguments:
         tree (Node object): A tree-structured object containing frequent itemsets.
         minimum_support (int): The minimum support threshold to determine frequent itemsets.
         closed (list, optional): Accumulates closed frequent itemsets (default is None).
@@ -40,7 +40,7 @@ def find_maximal(tree, minimum_support = 1, maximal=None):
     """
     Finds the maximal frequent itemsets in the specified dataset.
 
-    Args:
+    Arguments:
         tree (Node object): Tree structured object in which to find maximal
             frequent itemsets.
         minimum_support (int): The minimum support threshold to determine frequent itemsets.
@@ -73,7 +73,7 @@ def find_closed_maximal(tree, minimum_support = 1, closed=None, maximal=None):
     """
     Finds the closed and maximal frequent itemsets in the specified tree.
 
-    Args:
+    Arguments:
         tree (Node object): A tree-structured object containing frequent itemsets.
         minimum_support (int): The minimum support threshold to determine frequent itemsets.
         closed (list, optional): Accumulates closed frequent itemsets (default is None).
@@ -112,7 +112,7 @@ def find_frequent(tree, minimum_support = 1):
     """
     Finds the frequent itemsets in the specified tree.
 
-    Args:
+    Arguments:
         tree (Node object): A tree-structured object containing frequent itemsets.
         minimum_support (int): The minimum support threshold to determine frequent itemsets.
 

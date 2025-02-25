@@ -6,7 +6,7 @@ def one_hot_vector(feature):
     """
     Applies one-hot encoding to the input feature vector.
 
-    Args:
+    Arguments:
         feature (list): The feature vector to encode using one-hot encoding.
 
     Returns:
@@ -27,7 +27,7 @@ def one_hot_encoding(dataset):
     """
     Applies one-hot encoding to the input dataset.
 
-    Args:
+    Arguments:
         dataset (list): The dataset to encode using one-hot encoding.
 
     Returns:
@@ -48,7 +48,7 @@ def transaction2binary(transaction_data):
     Converts a data set in the transaction data format into a 
     binary array.
 
-    Args:
+    Arguments:
         transaction_data (list): Data set in the transaction data format. 
         Example: [['apple', 'banana', 'carrot'],['banana'],...]
     

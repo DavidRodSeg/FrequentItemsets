@@ -8,13 +8,15 @@ from utils.conversions import transaction2binary
 
 def explore(sample, header, tree=None):
     """
-    Explore the list to search for similarities with the values in the tree class passed as argument. 
+    Searches the list for similarities with the values in the given tree.  
     If no similarities are found, a new node is created in the tree.
 
-    Args:
-        list (pd.DataFrame): A Pandas DataFrame containing the values to evaluate.
-        tree (Node class): The root node in the tree structure to compare with (default: None).
+    Arguments:
+        sample (list): A list containing the values to evaluate.
+        header (list): A list of strings representing the names of the transaction items.
+        tree (Node): The root node of the tree structure to expand (default: None).
     """
+
     if tree is None:
         raise(ValueError("No tree has been passed."))
     else:
@@ -41,7 +43,7 @@ def fp_growth_algorithm(dataset):
     """
     Applies the FP-Growth algorithm to the input data set.
 
-    Args:
+    Arguments:
         dataset (list): Data set with items.
     
     Returns:
