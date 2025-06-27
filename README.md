@@ -1,19 +1,20 @@
 # FrequentItemsets
-## Objective
+## 🎯Objective
 
 The goal of this project was to develop an algorithm for determining the frequency of itemsets in a given dataset and classifying them as either maximal or closed frequent itemsets.
 Itemset generation was accomplished using the FP-Growth algorithm on a dataset in binary or transactional form. The resulting itemsets were stored in a tree structure implemented with a Node class.
 The final solutions can be presented as a Python dictionary.
 
-## Data set analysis
+## 📊 Data set analysis
 
 The data set used was [Real Market Data for Association Rules](https://www.kaggle.com/datasets/rukenmissonnier/real-market-data) which consists in a series of transactions in the form of a binary array, with "1" denoting
 the presence of the product in the transaction and "0" the abscence of it. While the rows represents the transactions of a given customer, the columns represent the elements in those transactions.
 
-## FP-Growth algorithm. Maximal and closed frequent itemsets
+## 📖 Theoretical background and implementation
+### FP-Growth algorithm. Maximal and closed frequent itemsets
 
 FP-Growth is an algorithm desing for finding frequent patterns in a data base or large data sets. The idea behind this algorihtm is to build a compressed representation of the data set in the form of a *FP tree*
-by adding nodes when a new element of an itemset appears and by taking into account the number of times a certain element appears in a data set. The latter is accomplished by assigning a counter, formally called **support**, on each of the nodes. This creates a compressed representation of the data set and it is more efficient than Apriori algorithm as it avoid scanning the data set multiple times.
+by adding nodes when a new element of an itemset appears and by taking into account the number of times a certain element appears in a data set. The latter is accomplished by assigning a counter, formally called **support**, on each of the nodes. This creates a compressed representation of the data set and it is more efficient than Apriori algorithm as it avoid scanning the data set multiple times. Only two scans are necessary: the first to obtain the frequencies of the items (1-item itemsets) and sort the transactions in descending order of frequency, and the second to build the FP tree.
 
 <p align="center">
 <img src="https://drive.google.com/uc?id=1n4JESI8Py7ZdowXbkXn5SQ9Jyyug5BZD" width="500">
@@ -61,16 +62,16 @@ As previously said, the maximal and closed frequent itemsets were obtained by ap
 <i> Flowchart of the algorithm used for finding the maximal and closed frequent itemsets.</i>
 </p>
 
-## How to use it
-### Dependencies
+## 🛠️ How to use it
+### 📦 Dependencies
 
 This implementation do not need any external library. The version of Python used was 3.10.6.
 
-### Search
+### 🧩 Search
 
 Run *frequent_itemset_mining.py* to start the search of closed and maximal frequent itemsets in the Real Market Data for Association Rules data set.
 
-### Results
+### 📈 Results
 
 The minimum support for considering an itemset as frequent is set as 40 by default. Running *frequent_itemset_mining.py* with this support shows the following results.
 
@@ -80,3 +81,12 @@ The minimum support for considering an itemset as frequent is set as 40 by defau
 <p align="center">
 <i> Output of frequent_itemset_mining.py.</i>
 </p>
+
+## 📚 References
+
+<div id="refs" class="references csl-bib-body hanging-indent">
+
+  <div id="ref-fpgrowth" class="csl-entry">
+    Han, J., Pei, J., & Yin, Y. (2000). <i>Mining Frequent Patterns without Candidate Generation</i>. In <i>Proceedings of the 2000 ACM SIGMOD International Conference on Management of Data</i> (pp. 1–12). <a href="https://doi.org/10.1145/342009.335372">https://doi.org/10.1145/342009.335372</a>
+  </div>    
+</div>
