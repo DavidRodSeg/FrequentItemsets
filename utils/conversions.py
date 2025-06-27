@@ -43,7 +43,7 @@ def one_hot_encoding(dataset):
     return one_hot
     
 
-def transaction2binary(transaction_data):
+def transaction_to_binary(transaction_data):
     """
     Converts a data set in the transaction data format into a 
     binary array.
