@@ -11,7 +11,7 @@ with open("prueba.csv", mode="r") as file:
     for row in csv_reader:
         dataset.append(row)
 
-print(dataset)
+# print(dataset)
 
 
 #################### FP-GROWTH ALGORITHM ####################

@@ -19,6 +19,7 @@ class Node:
         self.children = []
         self.counter = 1
         self.parent = parent
+        self.node_link = None # Node links for connecting data with the same values
 
     def add_child(self, child):
         """
@@ -28,7 +29,7 @@ class Node:
             child (Node class): Child node.
         """
         self.children.append(child)
-    
+
     def count(self):
         """
         Increases the internal counter of the itemset.
@@ -73,6 +74,32 @@ class Node:
             except KeyError:
                 continue
         raise KeyError(f"No node found with value: {key}")
+    
+
+class HeaderTable:
+    """
+    Class for representing the header table of the FP-tree.
+
+    This HeaderTable contain attributes and methods for tracking nodes with the same
+    values in the FP-tree and linking them with node links.
+    """
+    def __init__(self):
+        self.table = {}
+
+    def add_node_link(self, node: Node):
+        """
+        Adds a node link between parent and child nodes.
+
+        Arguments:
+            node (Node class): Reference to the node from the Node class.
+        """
+        if node.value not in self.table:
+            self.table[node.value] = node
+        else:
+            next_node = self.table[node.value]
+            while next_node.node_link is not None:
+                next_node = next_node.node_link
+            next_node.node_link = node
 
 
 def first_scan(dataset, minimum_support):
@@ -132,7 +159,7 @@ def sort_by_support(sample, header, item_order):
     return sorted_sample  
     
 
-def explore(sample, header, tree=None):
+def explore(sample, header, header_table: HeaderTable, tree: Node = None):
     """
     Searches the list for similarities with the values in the given tree.  
     If no similarities are found, a new node is created in the tree.
@@ -140,6 +167,7 @@ def explore(sample, header, tree=None):
     Arguments:
         sample (list): A list containing the values to evaluate.
         header (list): A list of strings representing the names of the transaction items.
+        header_table (HeaderTable): Header table for tracking nodes with same values.
         tree (Node): The root node of the tree structure to expand (default: None).
     """
 
@@ -159,6 +187,7 @@ def explore(sample, header, tree=None):
                 if not found:
                     child = Node(header[i], tree)
                     tree.add_child(child)
+                    header_table.add_node_link(child)
                     explore(sample[i + 1:], header[i + 1:], tree=child)
                     break
                 else:
@@ -173,7 +202,7 @@ def fp_tree_construction(dataset, minimum_support: int = 1):
         dataset (list): Data set with items.
     
     Returns:
-        freq_itemsets (Node class): Object that contains the itemsets
+        fp_tree (Node class): Object that contains the itemsets
             in a tree-structure.
     """
     # Check if the data set is in transaction or binary format and applies a transformaction in the first case
@@ -191,10 +220,11 @@ def fp_tree_construction(dataset, minimum_support: int = 1):
     header = dataset[0]
     data = dataset[1:]
 
-    freq_itemsets = Node("root") # Tree initilization
+    fp_tree = Node("root") # Tree initilization
+    header_table = HeaderTable() # Header table initilization
     
     for sample in data:
         sorted_sample = sort_by_support(sample, header, item_order)
-        explore(sorted_sample, header, freq_itemsets)
+        explore(sorted_sample, header, header_table, fp_tree)
 
-    return freq_itemsets
+    return fp_tree
