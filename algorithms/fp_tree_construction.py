@@ -19,7 +19,7 @@ class Node:
         self.children = []
         self.counter = 1
         self.parent = parent
-        self.node_link = None # Node links for connecting data with the same values
+        self.node_link = None # Node links for connecting data with the same values. It will help us to explore the FP-Tree transversely
 
     def add_child(self, child):
         """
@@ -82,9 +82,19 @@ class HeaderTable:
 
     This HeaderTable contain attributes and methods for tracking nodes with the same
     values in the FP-tree and linking them with node links.
+
+    Arguments:
+        item_support (dict): Dictionary with the counter of each item in the dataset.
+        minimum_support (int): Minimum support to consider an itemset as frequent.
     """
-    def __init__(self):
+    def __init__(self, item_support: dict, minimum_support: int = 1):
         self.table = {}
+        for item, count in item_support.items():
+            if count > minimum_support:
+                self.table[item] = {
+                    "node": None,
+                    "count": count
+                }
 
     def add_node_link(self, node: Node):
         """
@@ -93,13 +103,30 @@ class HeaderTable:
         Arguments:
             node (Node class): Reference to the node from the Node class.
         """
-        if node.value not in self.table:
-            self.table[node.value] = node
+        if node.value in self.table and self.table[node.value]["node"] is None:
+            self.table[node.value]["node"] = node
         else:
-            next_node = self.table[node.value]
+            next_node = self.table[node.value]["node"]
             while next_node.node_link is not None:
                 next_node = next_node.node_link
             next_node.node_link = node
+
+    def get(self, value):
+        """
+        Gets the reference to the first appareance with item 'value'.
+
+        Arguments:
+            value (str): Value to search in the header table.
+
+        Returns:
+            Node class: Reference to the first node in the FP-tree with item
+            `value`.
+        """
+        return self.table[value]
+    
+    def items(self):
+        """Returns all items in the header table."""
+        return self.table
 
 
 def first_scan(dataset, minimum_support):
@@ -131,7 +158,9 @@ def first_scan(dataset, minimum_support):
             else:
                 item_support[header[i]] = 1
 
-    item_order = list(dict(sorted(item_support.items(), key=lambda item: item[1] if item[1] >= minimum_support else None, reverse=True)))
+    frequent_items = {item: count for item, count in item_support.items() if count >= minimum_support}
+    sorted_items = sorted(frequent_items.items(), key=lambda x: x[1], reverse=True)
+    item_order = [item for item, _ in sorted_items]
 
     # Delete not frequent items
     for key in list(item_support):
@@ -153,10 +182,10 @@ def sort_by_support(sample, header, item_order):
     Returns:
         sorted_sample (list): The list containing the values to evaluate, but sorted.
     """
-    sorted_idx = [idx for value in header for idx, value_ord in enumerate(item_order) if value_ord == value] # If value is not in item_order, then it will be omitted which is what we expect
-    sorted_sample = [sample[idx] for idx in sorted_idx]
+    item_to_value = {item: value for item, value in zip(header, sample)}
+    sorted_sample = [item_to_value[item] for item in item_order if item in item_to_value]
 
-    return sorted_sample  
+    return sorted_sample
     
 
 def explore(sample, header, header_table: HeaderTable, tree: Node = None):
@@ -170,7 +199,6 @@ def explore(sample, header, header_table: HeaderTable, tree: Node = None):
         header_table (HeaderTable): Header table for tracking nodes with same values.
         tree (Node): The root node of the tree structure to expand (default: None).
     """
-
     if tree is None:
         raise(ValueError("No tree has been passed."))
     else:
@@ -180,7 +208,7 @@ def explore(sample, header, header_table: HeaderTable, tree: Node = None):
                 for child in tree.children:
                     if header[i] == child.value:         
                         child.count()
-                        explore(sample[i + 1:], header[i + 1:], tree=child)
+                        explore(sample[i + 1:], header[i + 1:], header_table, tree=child)
                         found = True
                         break
 
@@ -188,7 +216,7 @@ def explore(sample, header, header_table: HeaderTable, tree: Node = None):
                     child = Node(header[i], tree)
                     tree.add_child(child)
                     header_table.add_node_link(child)
-                    explore(sample[i + 1:], header[i + 1:], tree=child)
+                    explore(sample[i + 1:], header[i + 1:], header_table, tree=child)
                     break
                 else:
                     break
@@ -196,17 +224,18 @@ def explore(sample, header, header_table: HeaderTable, tree: Node = None):
 
 def fp_tree_construction(dataset, minimum_support: int = 1):
     """
-    Builds the FP-tree to the input data set.
+    Builds the FP-tree from the input dataset.
 
-    Arguments:
-        dataset (list): Data set with items.
-    
+    Args:
+        dataset (list): A list of transactions, where each transaction is a list of items.
+
     Returns:
-        fp_tree (Node class): Object that contains the itemsets
-            in a tree-structure.
+        fp_tree (Node): The root of the FP-tree representing the itemsets in a tree structure.
+        header_table (HeaderTable): The header table for tracking nodes with the same item.
     """
     # Check if the data set is in transaction or binary format and applies a transformaction in the first case
     target_list = ["1", "0", 1, 0, True, False]
+    print(dataset)
     if isinstance(dataset, list) and all(isinstance(transaction, list) for transaction in dataset):
         if any(item in target_list for item in set(dataset[1])):
             pass
@@ -214,17 +243,17 @@ def fp_tree_construction(dataset, minimum_support: int = 1):
             dataset = transaction_to_binary(dataset)
     
     # First scan
-    item_order, _ = first_scan(dataset, minimum_support)
+    item_order, item_support = first_scan(dataset, minimum_support)
 
     # Second scan
     header = dataset[0]
     data = dataset[1:]
 
     fp_tree = Node("root") # Tree initilization
-    header_table = HeaderTable() # Header table initilization
+    header_table = HeaderTable(item_support, minimum_support) # Header table initilization
     
     for sample in data:
         sorted_sample = sort_by_support(sample, header, item_order)
-        explore(sorted_sample, header, header_table, fp_tree)
+        explore(sorted_sample, item_order, header_table, fp_tree)
 
-    return fp_tree
+    return fp_tree, header_table
