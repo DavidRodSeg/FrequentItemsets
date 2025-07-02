@@ -45,24 +45,24 @@ def one_hot_encoding(dataset):
 
 def transaction_to_binary(transaction_data):
     """
-    Converts a data set in the transaction data format into a 
+    Converts a dataset in the transaction data format into a 
     binary array.
 
     Arguments:
-        transaction_data (list): Data set in the transaction data format. 
+        transaction_data (list): Dataset in the transaction data format. 
         Example: [['apple', 'banana', 'carrot'],['banana'],...]
     
     Returns:
-        list: Data set in the form of a binary array.
+        list: Dataset in the form of a binary array.
     """
     binary_data = []
 
     flattened_data = [data for row in transaction_data for data in row]
     header = sorted(set(flattened_data))
-    binary_data.append(header)
+    # binary_data.append(header)
 
     for transaction in transaction_data:
         binary_row = [1 if item in transaction else 0 for item in header]
         binary_data.append(binary_row)
 
-    return binary_data
+    return binary_data, header

@@ -21,13 +21,12 @@ def fp_growth(fp_tree: Node, header_table: HeaderTable, suffix: list = None, fre
         frequent_itemsets (list): List of the frequent itemsets.
         minimum_support (int): The minimum support threshold to determine frequent itemsets.
     """
-    time.sleep(1)
     if suffix is None:
         suffix = []
     if frequent_itemsets is None:
         frequent_itemsets = []
 
-    for item, key in sorted(header_table.table.items(), key=lambda x: x[1]["count"]):
+    for item, _ in sorted(header_table.table.items(), key=lambda x: x[1]["count"]):
         # Store the frequent itemsets
         new_suffix = suffix + [item]
         frequent_itemsets.append(new_suffix)
@@ -41,10 +40,8 @@ def fp_growth(fp_tree: Node, header_table: HeaderTable, suffix: list = None, fre
             parent = current_node.parent
             current_count = current_node.counter
 
-            while parent is not None:
+            while parent.value != "root":
                 current_pattern.append(parent.value)
-                print(current_pattern)
-                time.sleep(1)
                 parent = parent.parent
             current_pattern.reverse()
 
@@ -54,11 +51,11 @@ def fp_growth(fp_tree: Node, header_table: HeaderTable, suffix: list = None, fre
 
             current_node = current_node.node_link
 
-        # Build the new FP-Tree from the base
-        conditional_tree, conditional_header_table = fp_tree_construction(conditional_pattern, minimum_support)
+        # Build the new FP-Tree from the base and apply fp_growth to the new tree recursively
+        if conditional_pattern:
+            conditional_tree, conditional_header_table = fp_tree_construction(conditional_pattern, minimum_support, is_header=False)
 
-        # Apply fp_growth to the new tree recursively
-        if conditional_header_table.table.items() and conditional_tree.children:
-            frequent_itemsets = fp_growth(conditional_tree, conditional_header_table, new_suffix, frequent_itemsets, minimum_support)
+            if conditional_header_table.table.items() and conditional_tree.children:
+                frequent_itemsets = fp_growth(conditional_tree, conditional_header_table, new_suffix, frequent_itemsets, minimum_support)
 
     return frequent_itemsets

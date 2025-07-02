@@ -16,13 +16,13 @@ with open("prueba.csv", mode="r") as file:
 
 #################### FP-GROWTH ALGORITHM ####################
 fp_tree, header_table = fp_tree_construction(dataset)
-print(fp_tree.to_dict())
-itemsets = fp_growth(fp_tree, header_table)
+frequent_itemsets = fp_growth(fp_tree, header_table)
+print(f"FREQUENT ITEMSETS: {frequent_itemsets}")
 
 
 #################### CLOSED AND MAXIMAL ITEMSETS ####################
-closed, maximal = find_closed_maximal(itemsets, minimum_support=1)
+closed, maximal = find_closed_maximal(frequent_itemsets, minimum_support=1)
 print(f"CLOSED ITEMSETS: {closed}")
 print(f"MAXIMAL ITEMSETS: {maximal}")
-frequent = find_frequent(itemsets, minimum_support=1)
+frequent = find_frequent(frequent_itemsets, minimum_support=1)
 print(f"FREQUENT ITEMSETS: {frequent}")

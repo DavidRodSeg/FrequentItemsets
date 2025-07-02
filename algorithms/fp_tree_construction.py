@@ -90,7 +90,7 @@ class HeaderTable:
     def __init__(self, item_support: dict, minimum_support: int = 1):
         self.table = {}
         for item, count in item_support.items():
-            if count > minimum_support:
+            if count >= minimum_support:
                 self.table[item] = {
                     "node": None,
                     "count": count
@@ -129,26 +129,27 @@ class HeaderTable:
         return self.table
 
 
-def first_scan(dataset, minimum_support):
+def first_scan(data, header: list = None, minimum_support: int = 1):
     """
     Applies the first scan to obtain the support of the 1-item itemsets.
 
     Arguments:
-        dataset (list): Data set with items.
+        data (list): Dataset with items.
+        header (list): List with the item's names.
 
     Returns:
         item_support (dict): Dictionary containing the support of the 1-item itemsets.
         item_order (list): List with the items sorted in descending order of support.
     """
-    target_list = ["1", "0", 1, 0, True, False]
-    if isinstance(dataset, list) and all(isinstance(transaction, list) for transaction in dataset):
-        if any(item in target_list for item in set(dataset[1])): # REVISAR: Is set necessary?
-            pass
-        else:
-            dataset = transaction_to_binary(dataset)
+    # target_list = ["1", "0", 1, 0, True, False]
+    # if isinstance(data, list) and all(isinstance(transaction, list) for transaction in data):
+    #     if any(item in target_list for item in data[0]):
+    #         pass
+    #     else:
+    #         data, header = transaction_to_binary(data)
 
-    header = dataset[0]
-    data = dataset[1:]
+    if header is None:
+        raise ValueError("Header is missing.")
 
     item_support = {}
     for transaction in data:
@@ -157,7 +158,7 @@ def first_scan(dataset, minimum_support):
                 item_support[header[i]] += int(transaction[i])
             else:
                 item_support[header[i]] = 1
-
+    
     frequent_items = {item: count for item, count in item_support.items() if count >= minimum_support}
     sorted_items = sorted(frequent_items.items(), key=lambda x: x[1], reverse=True)
     item_order = [item for item, _ in sorted_items]
@@ -222,33 +223,37 @@ def explore(sample, header, header_table: HeaderTable, tree: Node = None):
                     break
                 
 
-def fp_tree_construction(dataset, minimum_support: int = 1):
+def fp_tree_construction(dataset, minimum_support: int = 1, is_header: bool = True):
     """
     Builds the FP-tree from the input dataset.
 
     Args:
         dataset (list): A list of transactions, where each transaction is a list of items.
+        is_header (bool): Boolean flag indicating whether the dataset includes a header in the first row.
 
     Returns:
         fp_tree (Node): The root of the FP-tree representing the itemsets in a tree structure.
         header_table (HeaderTable): The header table for tracking nodes with the same item.
     """
+    # Split if header flag is True
+    if is_header:
+        header = dataset[0]
+        data = dataset[1:]
+    else:
+        data = dataset
+        
     # Check if the data set is in transaction or binary format and applies a transformaction in the first case
     target_list = ["1", "0", 1, 0, True, False]
-    print(dataset)
-    if isinstance(dataset, list) and all(isinstance(transaction, list) for transaction in dataset):
-        if any(item in target_list for item in set(dataset[1])):
+    if isinstance(data, list) and all(isinstance(transaction, list) for transaction in data):
+        if any(item in target_list for item in data[0]):
             pass
         else:
-            dataset = transaction_to_binary(dataset)
+            data, header = transaction_to_binary(data)
     
     # First scan
-    item_order, item_support = first_scan(dataset, minimum_support)
+    item_order, item_support = first_scan(data, header, minimum_support)
 
     # Second scan
-    header = dataset[0]
-    data = dataset[1:]
-
     fp_tree = Node("root") # Tree initilization
     header_table = HeaderTable(item_support, minimum_support) # Header table initilization
     
