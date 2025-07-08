@@ -3,130 +3,90 @@ Methods for finding the maximal and closed itemsets within a tree structure.
 """
 
 
-import copy
+def sort_frequent_itemsets(freq_itemsets: dict):
+    """
+    Sorts the frequent itemsets dictionary lexicographically.
+
+    Arguments:
+        freq_itemsets (dict): A dictionary containing frequent itemsets and their respective support.
+
+    Returns:
+        sorted_freq_itemsets (dict): The sorted frequent itemsets dictionary.
+    """
+    sorted_items_dict = {tuple(sorted(key)) : value for (key, value) in freq_itemsets.items()}
+    sorted_frequent_itemsets = {key : sorted_items_dict[key] for key in sorted(sorted_items_dict)}
+
+    return sorted_frequent_itemsets
 
 
-def find_closed(tree, minimum_support = 1, closed=None):
+def find_closed_itemsets(freq_itemsets: dict, order: bool = True):
     """
     Finds the closed frequent itemsets in the specified tree.
 
     Arguments:
-        tree (Node object): A tree-structured object containing frequent itemsets.
-        minimum_support (int): The minimum support threshold to determine frequent itemsets.
-        closed (list, optional): Accumulates closed frequent itemsets (default is None).
+        freq_itemsets (dict): A dictionary containing frequent itemsets and their respective support.
+        order (bool): Flag indicating whether to order the itemsets.
 
     Returns:
-        list: A list of closed frequent itemsets.
+        closed_itemsets (list): A list of closed frequent itemsets.
     """
-    same = False # Detects whether the node has the same countes as its child.
-    if closed is None:
-        closed = []
+    if order:
+        sorted_frequent_itemsets = sort_frequent_itemsets(freq_itemsets)
 
-    for child in tree.children:
-        if child.counter == tree.counter:
-            same = True
-        if child.counter >= minimum_support:
-            find_closed(child, minimum_support, closed)
+    closed_itemsets = {}
+    for (itemset, support) in sorted_frequent_itemsets.items():
+        is_closed = True
+        for (itemset2, support2) in sorted_frequent_itemsets.items():
+            if set(itemset) < set(itemset2) and support == support2: # The comparison must be made with sets, as lists have order
+                is_closed = False
+                break
 
-    if not same:
-        item = tree.itemset()
-        if item and item not in closed:
-            closed.append(item)
-    
-    return closed
+        if is_closed:
+            closed_itemsets[itemset] = support
+
+    return closed_itemsets
 
 
-def find_maximal(tree, minimum_support = 1, maximal=None):
+def find_maximal_itemsets(freq_itemsets: dict, order: bool = True):
     """
     Finds the maximal frequent itemsets in the specified dataset.
 
     Arguments:
-        tree (Node object): Tree structured object in which to find maximal
-            frequent itemsets.
-        minimum_support (int): The minimum support threshold to determine frequent itemsets.
-        maximal (list, optional): Accumulates maximal frequent itemsets (default is None).
+        freq_itemsets (dict): A dictionary containing frequent itemsets and their respective support.
+        order (bool): Flag indicating whether to order the itemsets.
 
     Returns:
         list: A list of maximal frequent itemsets.
     """
-    frequent = False # Detects whether the node has any frequent child.
-    if maximal is None:
-        maximal = []
+    if order:
+        sorted_frequent_itemsets = sort_frequent_itemsets(freq_itemsets)
 
-    for child in tree.children:
-        if child.counter >= minimum_support:
-            find_maximal(child, minimum_support, maximal)
-            frequent = True
+    maximal_itemsets = {}
+    for (itemset, support) in sorted_frequent_itemsets.items():
+        is_maximal = True
+        for (itemset2, _) in sorted_frequent_itemsets.items():
+            if set(itemset) < set(itemset2):
+                is_maximal = False
+                break
 
-    if not frequent:
-        item = tree.itemset()
-        if item and item not in maximal: # To avoid void values and repetitions.
-            maximal.append(item)
+        if is_maximal:
+            maximal_itemsets[itemset] = support
 
-    if maximal is None:
-        raise ValueError("No maximal found.")
-    else:
-        return maximal
+    return maximal_itemsets
 
 
-def find_closed_maximal(tree, minimum_support = 1, closed=None, maximal=None):
+def find_closed_maximal(freq_itemsets: dict, order: bool = True):
     """
     Finds the closed and maximal frequent itemsets in the specified tree.
 
     Arguments:
-        tree (Node object): A tree-structured object containing frequent itemsets.
-        minimum_support (int): The minimum support threshold to determine frequent itemsets.
-        closed (list, optional): Accumulates closed frequent itemsets (default is None).
-        maximal (list, optional): Accumulates maximal frequent itemsets (default is None).
+        freq_itemsets (dict): A dictionary containing frequent itemsets and their respective support.
+        order (bool): Flag indicating whether to order the itemsets.
 
     Returns:
         closed, maximal (tuple): A tuple containing two lists — the closed itemsets and the maximal itemsets.
     """
-    same = False
-    frequent = False
-    if closed is None or maximal is None:
-        closed = []
-        maximal = []
+    closed_itemsets = find_closed_itemsets(freq_itemsets, order)
+    maximal_itemsets = find_maximal_itemsets(freq_itemsets, order)
 
-    for child in tree.children:
-        if child.counter == tree.counter:
-            same = True
-        if child.counter >= minimum_support:
-            find_closed_maximal(child, minimum_support, closed, maximal)
-            frequent = True
-
-    if not frequent:
-        item = tree.itemset()
-        if item and item not in maximal:
-            maximal.append(item)
-            closed.append(item) # Maximal are closed, but not viceversa.
-    elif not same:
-        item = tree.itemset()
-        if item and item not in closed:
-            closed.append(item)
-    
-    return closed, maximal
-
-  
-def find_frequent(tree, minimum_support = 1):
-    """
-    Finds the frequent itemsets in the specified tree.
-
-    Arguments:
-        tree (Node object): A tree-structured object containing frequent itemsets.
-        minimum_support (int): The minimum support threshold to determine frequent itemsets.
-
-    Returns:
-        list: A list containing the frequent itemsets.
-    """
-    maximal = find_maximal(tree, minimum_support)
-    frequent = copy.deepcopy(maximal)
-
-    for itemset in maximal:
-        if len(itemset) > 1:
-            temp_itemset = itemset[:]
-            while len(temp_itemset) > 1:
-                temp_itemset.pop()
-                frequent.append(temp_itemset)
-    
-    return frequent
+    return closed_itemsets, maximal_itemsets

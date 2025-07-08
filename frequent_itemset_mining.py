@@ -1,5 +1,5 @@
 import csv
-from algorithms import fp_tree_construction, find_closed_maximal, find_frequent, fp_growth
+from algorithms import fp_tree_construction, find_closed_maximal, fp_growth
 
 
 #################### LOADING THE DATA SET ####################
@@ -11,8 +11,6 @@ with open("prueba.csv", mode="r") as file:
     for row in csv_reader:
         dataset.append(row)
 
-# print(dataset)
-
 
 #################### FP-GROWTH ALGORITHM ####################
 fp_tree, header_table = fp_tree_construction(dataset)
@@ -21,8 +19,6 @@ print(f"FREQUENT ITEMSETS: {frequent_itemsets}")
 
 
 #################### CLOSED AND MAXIMAL ITEMSETS ####################
-closed, maximal = find_closed_maximal(frequent_itemsets, minimum_support=1)
+closed, maximal = find_closed_maximal(frequent_itemsets)
 print(f"CLOSED ITEMSETS: {closed}")
 print(f"MAXIMAL ITEMSETS: {maximal}")
-frequent = find_frequent(frequent_itemsets, minimum_support=1)
-print(f"FREQUENT ITEMSETS: {frequent}")
