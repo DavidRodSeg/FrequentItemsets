@@ -4,10 +4,9 @@ Functions for mining frequent patterns with FP-tree by pattern fragment growth.
 
 
 from algorithms import Node, HeaderTable, fp_tree_construction
-import time
 
 
-def fp_growth(fp_tree: Node, header_table: HeaderTable, suffix: list = None, frequent_itemsets: list = None,
+def fp_growth(fp_tree: Node, header_table: HeaderTable, suffix: list = None, frequent_itemsets: dict = None,
               minimum_support: int = 1):
     """
     Applies pattern fragment growth (FP-Growth) to mine the frequent itemsets for the 
@@ -24,12 +23,12 @@ def fp_growth(fp_tree: Node, header_table: HeaderTable, suffix: list = None, fre
     if suffix is None:
         suffix = []
     if frequent_itemsets is None:
-        frequent_itemsets = []
+        frequent_itemsets = {}
 
-    for item, _ in sorted(header_table.table.items(), key=lambda x: x[1]["count"]):
+    for item, links_counts in reversed(header_table.table.items()):
         # Store the frequent itemsets
         new_suffix = suffix + [item]
-        frequent_itemsets.append(new_suffix)
+        frequent_itemsets[tuple(new_suffix)] = links_counts["count"] # REVISAR
 
         # Find conditional pattern base
         conditional_pattern = []

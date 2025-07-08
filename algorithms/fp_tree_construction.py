@@ -85,16 +85,14 @@ class HeaderTable:
 
     Arguments:
         item_support (dict): Dictionary with the counter of each item in the dataset.
-        minimum_support (int): Minimum support to consider an itemset as frequent.
     """
-    def __init__(self, item_support: dict, minimum_support: int = 1):
+    def __init__(self, item_support: dict):
         self.table = {}
         for item, count in item_support.items():
-            if count >= minimum_support:
-                self.table[item] = {
-                    "node": None,
-                    "count": count
-                }
+            self.table[item] = {
+                "node": None,
+                "count": count
+            }
 
     def add_node_link(self, node: Node):
         """
@@ -141,32 +139,27 @@ def first_scan(data, header: list = None, minimum_support: int = 1):
         item_support (dict): Dictionary containing the support of the 1-item itemsets.
         item_order (list): List with the items sorted in descending order of support.
     """
-    # target_list = ["1", "0", 1, 0, True, False]
-    # if isinstance(data, list) and all(isinstance(transaction, list) for transaction in data):
-    #     if any(item in target_list for item in data[0]):
-    #         pass
-    #     else:
-    #         data, header = transaction_to_binary(data)
-
     if header is None:
         raise ValueError("Header is missing.")
 
+    # Getting item support
     item_support = {}
     for transaction in data:
         for i in range(len(transaction)):
             if header[i] in item_support:
                 item_support[header[i]] += int(transaction[i])
             else:
-                item_support[header[i]] = 1
+                item_support[header[i]] = int(transaction[i])
     
+    # Filter frequent items
     frequent_items = {item: count for item, count in item_support.items() if count >= minimum_support}
+
+    # Sort by support. Descending order
     sorted_items = sorted(frequent_items.items(), key=lambda x: x[1], reverse=True)
     item_order = [item for item, _ in sorted_items]
-
-    # Delete not frequent items
-    for key in list(item_support):
-        if key not in item_order:
-            item_support.pop(key, None)
+    
+    # Reconstruct filtered item_support dictionary in sorted order
+    item_support = {item: frequent_items[item] for item in item_order}
 
     return item_order, item_support
 
@@ -255,7 +248,7 @@ def fp_tree_construction(dataset, minimum_support: int = 1, is_header: bool = Tr
 
     # Second scan
     fp_tree = Node("root") # Tree initilization
-    header_table = HeaderTable(item_support, minimum_support) # Header table initilization
+    header_table = HeaderTable(item_support) # Header table initilization
     
     for sample in data:
         sorted_sample = sort_by_support(sample, header, item_order)
