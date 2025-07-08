@@ -176,7 +176,9 @@ def sort_by_support(sample, header, item_order):
     Returns:
         sorted_sample (list): The list containing the values to evaluate, but sorted.
     """
+    # Creates a link between item names and binary values
     item_to_value = {item: value for item, value in zip(header, sample)}
+    # Sort the values according to item_order
     sorted_sample = [item_to_value[item] for item in item_order if item in item_to_value]
 
     return sorted_sample
@@ -196,16 +198,19 @@ def explore(sample, header, header_table: HeaderTable, tree: Node = None):
     if tree is None:
         raise(ValueError("No tree has been passed."))
     else:
+        # This process is applied recursively
         for i in range(len(sample)):
             if int(sample[i]) == 1:
                 found = False
                 for child in tree.children:
+                    # If a node exists, then the counter is increased and we continue analyzing the transaction
                     if header[i] == child.value:         
                         child.count()
                         explore(sample[i + 1:], header[i + 1:], header_table, tree=child)
                         found = True
                         break
-
+                
+                # If no node has been found, then it is created
                 if not found:
                     child = Node(header[i], tree)
                     tree.add_child(child)

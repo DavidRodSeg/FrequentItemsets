@@ -13,8 +13,8 @@ with open("prueba.csv", mode="r") as file:
 
 
 #################### FP-GROWTH ALGORITHM ####################
-fp_tree, header_table = fp_tree_construction(dataset)
-frequent_itemsets = fp_growth(fp_tree, header_table)
+_, header_table = fp_tree_construction(dataset)
+frequent_itemsets = fp_growth(header_table)
 print(f"FREQUENT ITEMSETS: {frequent_itemsets}")
 
 
