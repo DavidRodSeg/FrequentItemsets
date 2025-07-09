@@ -41,7 +41,7 @@ Finally, the maximal and closed frequent itemsets can be found by its definition
 <i> FP tree example with highlighted maximal and closed frequent itemsets. Image taken from https://www.geeksforgeeks.org/maximal-frequent-itemsets/. </i>
 </p>
 
-## Node class
+### Node class
 
 The **Node** class is used to create the tree structure for the FP-Growth algorithm. It works by recursively generating child nodes from a root node using the *add_child* method. The class stores the node's value, a counter tracking the number of times the node has appeared, a list of child nodes, and a reference to its parent node.
 
@@ -78,7 +78,7 @@ python frequent_itemset_mining.py example.csv 1
 The minimum support for considering an itemset as frequent is set as 40 by default. Running *frequent_itemset_mining.py* with this support shows the following results.
 
 <p align="center">
-<img src="https://drive.google.com/uc?id=13fEEYV-8p4daTyDLqKasfEbEiaL39zxZ" width="1000">
+<img src="https://drive.google.com/uc?id=1QmQXy7UOlgFH1lxlr8W6bbtnqdqCWg4q" width="1000">
 </p>
 <p align="center">
 <i> Output of frequent_itemset_mining.py.</i>
