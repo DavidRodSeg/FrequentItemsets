@@ -28,8 +28,6 @@ by adding nodes when a new element of an itemset appears and by taking into acco
 <i> FP tree example. Image taken from https://www.scaler.com/topics/data-mining-tutorial/fp-growth-in-data-mining/. </i>
 </p>
 
-After creating the FP tree, the frequent itemsets are found by exploring the tree backwards from the bottom nodes, exploring all the frequent combination with the current node. This is a process that is recursively repeated until the "root" node.
-
 After creating the FP-tree, frequent itemsets are found by examining the tree from the bottom up, starting with each item in the header table. The header table contains a link to the first appearance of a certain item. For each item, its conditional pattern base is extracted, representing the paths leading to that item from the "root". Then, a conditional FP-tree is constructed from these patterns, and the process is recursively repeated on each conditional tree until the "root" node is reached.
 
 Finally, the maximal and closed frequent itemsets can be found by its definition. The **maximal frequent itemsets** are itemsets which are frequent, with a support above the threshold, and none of the immediate supersets are frequent. In contrast, **closed frequent itemsets** are itemsets that are frequent and its immediate supersets do not have the same support (they have an inferior support). An interesting property derived by this definition is that maximal itemsets are closed, but not viceversa. This fact can reduce the number of times needed to iterate over the frequent itemsets while implementing the algorithm.
