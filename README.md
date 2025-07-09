@@ -22,7 +22,7 @@ The idea behind this algorihtm is to build a compressed representation of the da
 by adding nodes when a new element of an itemset appears and by taking into account the number of times a certain element appears in a data set. The latter is accomplished by assigning a counter, formally called **support**, on each of the nodes. This creates a compressed representation of the data set and it is more efficient than Apriori algorithm as it avoid scanning the data set multiple times. Only two scans are necessary: the first to obtain the frequencies of the items (1-item itemsets) and sort the transactions in descending order of frequency, and the second to build the FP tree. Although a specific order is not strictly necessary, the order itself is important, as it allows a more compact tree and facilitates the complete exploration of the transaction database.
 
 <p align="center">
-<img src="https://drive.google.com/uc?id=1n4JESI8Py7ZdowXbkXn5SQ9Jyyug5BZD" width="500">
+<img src="images/fpgrowth.png" width="500">
 </p>
 <p align="center">
 <i> FP tree example. Image taken from https://www.scaler.com/topics/data-mining-tutorial/fp-growth-in-data-mining/. </i>
@@ -35,7 +35,7 @@ After creating the FP-tree, frequent itemsets are found by examining the tree fr
 Finally, the maximal and closed frequent itemsets can be found by its definition. The **maximal frequent itemsets** are itemsets which are frequent, with a support above the threshold, and none of the immediate supersets are frequent. In contrast, **closed frequent itemsets** are itemsets that are frequent and its immediate supersets do not have the same support (they have an inferior support). An interesting property derived by this definition is that maximal itemsets are closed, but not viceversa. This fact can reduce the number of times needed to iterate over the frequent itemsets while implementing the algorithm.
 
 <p align="center">
-<img src="https://drive.google.com/uc?id=1PKLofcteTMV7TZ7kjCB8MWQrOLt6EeOZ" width="500">
+<img src="images/maximal_closed.jpg" width="500">
 </p>
 <p align="center">
 <i> FP tree example with highlighted maximal and closed frequent itemsets. Image taken from https://www.geeksforgeeks.org/maximal-frequent-itemsets/. </i>
@@ -78,11 +78,12 @@ python frequent_itemset_mining.py example.csv 1
 The minimum support for considering an itemset as frequent is set as 40 by default. Running *frequent_itemset_mining.py* with this support shows the following results.
 
 <p align="center">
-<img src="https://drive.google.com/uc?id=1QmQXy7UOlgFH1lxlr8W6bbtnqdqCWg4q" width="1000">
+  <img src="images/results_fp.png" width="1000">
 </p>
 <p align="center">
-<i> Output of frequent_itemset_mining.py.</i>
+  <i>Output of frequent_itemset_mining.py.</i>
 </p>
+
 
 ## 📚 References
 
