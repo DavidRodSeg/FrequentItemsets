@@ -3,7 +3,7 @@ Functions for mining frequent patterns with FP-tree by pattern fragment growth.
 """
 
 
-from algorithms import Node, HeaderTable, fp_tree_construction
+from algorithms import HeaderTable, fp_tree_construction
 
 
 def fp_growth(header_table: HeaderTable, suffix: list = None, frequent_itemsets: dict = None,
@@ -16,8 +16,11 @@ def fp_growth(header_table: HeaderTable, suffix: list = None, frequent_itemsets:
         header_table (HeaderTable): The header table of the FP-Tree, containing references
             to the first occurrence of each item in the tree.
         suffix (list): List containing the suffix of the conditional path being explored.
-        frequent_itemsets (list): List of the frequent itemsets.
+        frequent_itemsets (dict): Dictionary of the frequent itemsets.
         minimum_support (int): The minimum support threshold to determine frequent itemsets.
+
+    Returns:
+        frequent_itemsets (dict): Dictionary of the frequent itemsets.
     """
     if suffix is None:
         suffix = []
@@ -27,7 +30,7 @@ def fp_growth(header_table: HeaderTable, suffix: list = None, frequent_itemsets:
     for item, links_counts in reversed(header_table.table.items()):
         # Store the frequent itemsets
         new_suffix = suffix + [item]
-        frequent_itemsets[tuple(new_suffix)] = links_counts["count"] # REVISAR
+        frequent_itemsets[tuple(new_suffix)] = links_counts["count"]
 
         # Find conditional pattern base
         conditional_pattern = []

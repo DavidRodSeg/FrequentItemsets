@@ -129,11 +129,12 @@ class HeaderTable:
 
 def first_scan(data, header: list = None, minimum_support: int = 1):
     """
-    Applies the first scan to obtain the support of the 1-item itemsets.
+    Applies the first scan to obtain the support of the 1-item frequent itemsets.
 
     Arguments:
         data (list): Dataset with items.
         header (list): List with the item's names.
+        minimum_support (int): The minimum support threshold to determine frequent itemsets (default=1). 
 
     Returns:
         item_support (dict): Dictionary containing the support of the 1-item itemsets.
@@ -227,6 +228,7 @@ def fp_tree_construction(dataset, minimum_support: int = 1, is_header: bool = Tr
 
     Args:
         dataset (list): A list of transactions, where each transaction is a list of items.
+        minimum_support (int): The minimum support threshold to determine frequent itemsets (default=1).
         is_header (bool): Boolean flag indicating whether the dataset includes a header in the first row.
 
     Returns:
