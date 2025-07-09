@@ -37,7 +37,7 @@ with open(file_path, mode="r") as file:
 
 #################### FP-GROWTH ALGORITHM ####################
 _, header_table = fp_tree_construction(dataset, min_support)
-frequent_itemsets = fp_growth(header_table, minimum_support=min_support)
+frequent_itemsets = fp_growth(header_table, min_support)
 frequent_itemsets = sort_frequent_itemsets(frequent_itemsets)
 print(f"FREQUENT ITEMSETS: {frequent_itemsets}")
 
